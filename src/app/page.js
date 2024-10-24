@@ -1,101 +1,83 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [price, setPrice] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const calculateDiscount = () => {
+    setError(null);
+    setResult(null); // Reset result on new calculation
+
+    const parsedPrice = parseFloat(price);
+    const parsedDiscount = parseFloat(discount);
+
+    if (!parsedPrice || !parsedDiscount || parsedPrice <= 0 || parsedDiscount <= 0 || parsedDiscount > 100) {
+      setError("Please enter a valid price and discount percentage.");
+      return;
+    }
+
+    // Calculate the discount
+    const discountAmount = (parsedPrice * parsedDiscount) / 100;
+    const finalPrice = parsedPrice - discountAmount;
+
+    // Update the result
+    setResult({
+      originalPrice: parsedPrice.toFixed(2),
+      discountPercentage: parsedDiscount,
+      discountAmount: discountAmount.toFixed(2),
+      finalPrice: finalPrice.toFixed(2),
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center px-4">
+      <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md transform transition-transform duration-500 hover:scale-105">
+        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-6 animate-bounce">Discount Calculator</h1>
+        <div className="space-y-4">
+          <div className="flex flex-col">
+            <label className="text-lg font-semibold text-gray-700">Price: </label>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Enter price"
+              className="p-3 mt-1 bg-gray-800 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-colors"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
+          <div className="flex flex-col">
+            <label className="text-lg font-semibold text-gray-700">Discount (%): </label>
+            <input
+              type="number"
+              value={discount}
+              onChange={(e) => setDiscount(e.target.value)}
+              placeholder="Enter discount percentage"
+              className="p-3 mt-1 bg-gray-800 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-colors"
+            />
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={calculateDiscount}
+          className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-md shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-400 transform transition-transform duration-300 hover:scale-105"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          Calculate
+        </button>
+
+        {error && <p className="text-red-500 text-center mt-4 animate-pulse">{error}</p>}
+
+        {result && (
+          <div className="mt-6 bg-indigo-100 p-4 rounded-md shadow-md animate-fade-in">
+            <h2 className="text-xl font-semibold text-indigo-600 text-center mb-4">Discount Details</h2>
+            <p className="text-lg text-gray-700">Original Price: <span className="font-bold">${result.originalPrice}</span></p>
+            <p className="text-lg text-gray-700">Discount Percentage: <span className="font-bold">{result.discountPercentage}%</span></p>
+            <p className="text-lg text-gray-700">Discount Amount: <span className="font-bold">${result.discountAmount}</span></p>
+            <p className="text-lg text-gray-700">Final Price: <span className="font-bold">${result.finalPrice}</span></p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
